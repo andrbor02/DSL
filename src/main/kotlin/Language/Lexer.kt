@@ -1,39 +1,43 @@
 package Language
 
+import Language.Exceptions.LexerException
 import java.util.regex.Pattern
 
-class Lexer(val code: String) {
+class Lexer(private val code: String) {
     private var position = 0
-    var tokenList = mutableListOf<Token>()
+    private var tokenList = mutableListOf<Token>()
 
     fun lex(): List<Token> {
         println(code)
-        while (nextToken()) { }
+        nextToken()
 
         return tokenList
     }
 
-    fun nextToken(): Boolean {
+    private fun nextToken() {
         if (position >= code.length) {
-            return false
+            return
         }
         val tokenTypesList = TokenTypesList.values()
 
-        for (i in 0 until tokenTypesList.size) {
-            val tokenType = tokenTypesList[i].tokenType
+        for (token in tokenTypesList) {
+            val tokenType = token.tokenType
             val regex = tokenType.regex
             val matcher = Pattern.compile(regex).matcher(code)
+
             if (matcher.find(position) && matcher.start() == position) {
-                code.substring(position + matcher.group().length)
-                val token = Token(tokenType, matcher.group(), position)
-                position += matcher.group().length
                 if (tokenType.name != TokenTypesList.MARKING.name) {
-                    tokenList.add(token)
+                    val newToken = Token(tokenType, matcher.group(), position)
+                    tokenList.add(newToken)
                 }
-                return true
+
+                code.substring(position + matcher.group().length)
+                position += matcher.group().length
+
+                return nextToken()
             }
         }
-        throw Exception("Error on $position character -> ${tokenList.last()}")
+        throw LexerException("Unknown symbol on $position position")
     }
 }
 

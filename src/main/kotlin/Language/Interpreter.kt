@@ -1,32 +1,32 @@
 package Language
 
 import Language.AST.*
+import Language.Exceptions.InterpreterException
 import java.util.*
 
 class Interpreter {
     private val variableStorage = HashMap<String, String>()
 
     fun interpret(node: ExpressionNode): String {
-        //println(node.javaClass)
         when (node) {
             is UnaryOperationNode -> unaryOperationHandler(node)
             is BinaryOperatorNode -> return binaryOperatorHandler(node)
-            is NumberNode -> return node.number.value
-            is VariableNode -> return variableStorage[node.variable.value] ?: "VARIABLE ERROR"
             is IfNode -> ifHandler(node)
             is WhileNode -> whileHandler(node)
-            //is ForNode -> forHandler(node)
+
+            is NumberNode -> return node.number.value
+            is VariableNode -> return variableStorage[node.variable.value] ?: "VARIABLE ERROR"
         }
-        return "Node error in interpreter"
+        throw InterpreterException("Node at  ${node.toString()}")
     }
 
-    fun unaryOperationHandler(node: UnaryOperationNode) {
+    private fun unaryOperationHandler(node: UnaryOperationNode) {
         when (node.operator.type.name) {
             TokenTypesList.LOGGER.tokenType.name -> println(interpret(node.operand))
         }
     }
 
-    fun binaryOperatorHandler(node: BinaryOperatorNode): String {
+    private fun binaryOperatorHandler(node: BinaryOperatorNode): String {
         when (node.operator.type.name) {
             TokenTypesList.ASSIGN.tokenType.name -> {
                 val result = interpret(node.rightNode)
@@ -53,7 +53,7 @@ class Interpreter {
         }
     }
 
-    fun ifHandler(node: IfNode) {
+    private fun ifHandler(node: IfNode) {
         val leftVal = interpret(node.leftNode).toInt()
         val rightVal = interpret(node.rightNode).toInt()
         when (node.operator.type) {
@@ -83,27 +83,25 @@ class Interpreter {
         }
     }
 
-    fun getThenOperations(node: IfNode) {
-        for (i in 0 until node.thenOperations.size) {
-            interpret(node.thenOperations[i])
+    private fun getThenOperations(node: IfNode) {
+        for (thenOperation in node.thenOperations) {
+            interpret(thenOperation)
         }
     }
 
-    fun getElseOperations(node: IfNode) {
-        for (i in 0 until node.elseOperations.size) {
-            interpret(node.elseOperations[i])
+    private fun getElseOperations(node: IfNode) {
+        for (elseOperation in node.elseOperations) {
+            interpret(elseOperation)
         }
     }
 
-    fun whileHandler(node: WhileNode) {
+    private fun whileHandler(node: WhileNode) {
         var leftVal = interpret(node.leftNode).toInt()
         var rightVal = interpret(node.rightNode).toInt()
         when (node.operator.type) {
             TokenTypesList.LESS.tokenType -> {
                 while (leftVal < rightVal) {
-                    for (operation in node.operations) {
-                        interpret(operation)
-                    }
+                    node.operations.forEach { interpret(it) }
                     leftVal = interpret(node.leftNode).toInt()
                     rightVal = interpret(node.rightNode).toInt()
                 }
@@ -111,9 +109,7 @@ class Interpreter {
 
             TokenTypesList.MORE.tokenType -> {
                 while (leftVal > rightVal) {
-                    for (operation in node.operations) {
-                        interpret(operation)
-                    }
+                    node.operations.forEach { interpret(it) }
                     leftVal = interpret(node.leftNode).toInt()
                     rightVal = interpret(node.rightNode).toInt()
                 }
@@ -121,9 +117,7 @@ class Interpreter {
 
             TokenTypesList.EQUAL.tokenType -> {
                 while (leftVal == rightVal) {
-                    for (operation in node.operations) {
-                        interpret(operation)
-                    }
+                    node.operations.forEach { interpret(it) }
                     leftVal = interpret(node.leftNode).toInt()
                     rightVal = interpret(node.rightNode).toInt()
                 }

@@ -2,7 +2,7 @@ package Language
 
 import Language.AST.*
 
-class Parser(val tokensList: List<Token>) {
+class Parser(private val tokensList: List<Token>) {
     private var index = 0
 
     fun parse(): RootNode {
@@ -15,7 +15,7 @@ class Parser(val tokensList: List<Token>) {
         return root
     }
 
-    fun getSimilarToken(tokenTypes: List<TokenType>): Token? {
+    private fun getSimilarToken(tokenTypes: List<TokenType>): Token? {
         if (index < tokensList.size) {
             val currentToken = tokensList[index]
             for (tokenType in tokenTypes) {
@@ -28,11 +28,12 @@ class Parser(val tokensList: List<Token>) {
         return null
     }
 
-    fun require(expected: List<TokenType>) {
-        getSimilarToken(expected) ?: throw Exception("Expected ${expected[0]} on position ${tokensList[index].position}")
+    private fun require(expected: List<TokenType>) {
+        getSimilarToken(expected)
+            ?: throw Exception("Expected ${expected[0]} on position ${tokensList[index].position}")
     }
 
-    fun parseExpression(): ExpressionNode {
+    private fun parseExpression(): ExpressionNode {
         when (tokensList[index].type.name) {
             TokenTypesList.VARIABLE.tokenType.name -> {
                 val varNode = parseVariableOrNumber()
@@ -51,10 +52,6 @@ class Parser(val tokensList: List<Token>) {
                 index++
                 return parseIF()
             }
-            TokenTypesList.FOR.tokenType.name -> {
-                index++
-                return parseFor()
-            }
             TokenTypesList.WHILE.tokenType.name -> {
                 index++
                 return parseWhile()
@@ -63,7 +60,7 @@ class Parser(val tokensList: List<Token>) {
         }
     }
 
-    fun parseFirstPriority(): ExpressionNode {
+    private fun parseFirstPriority(): ExpressionNode {
         return if (tokensList[index].type == TokenTypesList.LBRACKET.tokenType) {
             index++
             val node = parseThirdPriority()
@@ -74,7 +71,7 @@ class Parser(val tokensList: List<Token>) {
         }
     }
 
-    fun parseSecondPriority(): ExpressionNode {
+    private fun parseSecondPriority(): ExpressionNode {
         var leftVal = parseFirstPriority()
         var operator = getSimilarToken(
             listOf(
@@ -95,7 +92,7 @@ class Parser(val tokensList: List<Token>) {
         return leftVal
     }
 
-    fun parseThirdPriority(): ExpressionNode {
+    private fun parseThirdPriority(): ExpressionNode {
         var leftValue = parseSecondPriority()
         var operator = getSimilarToken(
             listOf(
@@ -116,7 +113,7 @@ class Parser(val tokensList: List<Token>) {
         return leftValue
     }
 
-    fun parseVariableOrNumber(): ExpressionNode {
+    private fun parseVariableOrNumber(): ExpressionNode {
         if (tokensList[index].type == TokenTypesList.NUMBER.tokenType) {
             index++
             return NumberNode(tokensList[index - 1])
@@ -128,7 +125,7 @@ class Parser(val tokensList: List<Token>) {
         throw Exception("Expected variable or number on $index position")
     }
 
-    fun parseIF(): IfNode {
+    private fun parseIF(): IfNode {
         val leftNode = parseThirdPriority()
         val operator = getSimilarToken(
             listOf(
@@ -162,7 +159,7 @@ class Parser(val tokensList: List<Token>) {
         return ifNode
     }
 
-    fun parseWhile(): WhileNode {
+    private fun parseWhile(): WhileNode {
         val leftNode = parseThirdPriority()
         val operator = getSimilarToken(
             listOf(
@@ -185,31 +182,7 @@ class Parser(val tokensList: List<Token>) {
         return whileNode
     }
 
-    fun parseFor(): ExpressionNode {
-//        val leftNode = parseThirdPriority()
-//        val operator = getSimilarToken(
-//            listOf(
-//                TokenTypesList.LESS.tokenType,
-//                TokenTypesList.MORE.tokenType,
-//                TokenTypesList.EQUAL.tokenType
-//            )
-//        ) ?: throw Exception("FOR ERROR: Expected operator on position $index!")
-//        val rightNode = parseThirdPriority()
-//
-//        val varNode = parseVariableOrNumber()
-//        val assign = getSimilarToken(listOf(TokenTypesList.ASSIGN.tokenType))
-//        val rightVal = parseThirdPriority()
-//        val actionNode
-//        if (assign != null) {
-//            actionNode = BinaryOperatorNode(assign, varNode, rightVal)
-//        } else {
-//            throw Exception("Expected '=' in FOR on position $index")
-//        }
-//        val forNode = ForNode(operator, leftNode, rightNode,)
-        return ExpressionNode()
-    }
-
-    fun getOperations(): ExpressionNode {
+    private fun getOperations(): ExpressionNode {
         val codeStringNode = parseExpression()
         require(listOf(TokenTypesList.STRINGEND.tokenType))
         return codeStringNode

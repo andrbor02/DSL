@@ -1,14 +1,12 @@
 package Language
 
-import java.util.regex.Pattern
-
 class TokenType(val name: String, val regex: String) {
     override fun toString(): String {
         return name
     }
 }
 
-enum class TokenTypesList (val tokenType: TokenType) {
+enum class TokenTypesList(val tokenType: TokenType) {
     NUMBER(TokenType("NUMBER", "0|([1-9][0-9]*)")),
     VARIABLE(TokenType("VARIABLE", "[a-z]+")),
 
@@ -33,6 +31,5 @@ enum class TokenTypesList (val tokenType: TokenType) {
 
     IF(TokenType("IF", "IF")),
     ELSE(TokenType("ELSE", "ELSE")),
-    FOR(TokenType("FOR", "FOR")),
     WHILE(TokenType("WHILE", "WHILE"))
 }
