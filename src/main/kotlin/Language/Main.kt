@@ -11,6 +11,9 @@ fun main(args: Array<String>) {
         LOG> p;
         p = p - 1;
         };
+        IF 6 - 2 LESS p {
+        LOG> 1 + 2 * (2 - 4);
+        };
     """.trimIndent()
 
     val lexer = Lexer(code)

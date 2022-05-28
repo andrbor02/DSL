@@ -1,7 +1,5 @@
 package Language
 
-import java.util.regex.Pattern
-
 class TokenType(val name: String, val regex: String) {
     override fun toString(): String {
         return name
