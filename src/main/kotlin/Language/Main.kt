@@ -1,7 +1,6 @@
-import Language.*
-import Language.AST.BinaryOperatorNode
-import Language.AST.NumberNode
-import Language.AST.UnaryOperationNode
+import Language.Interpreter
+import Language.Lexer
+import Language.Parser
 
 fun main(args: Array<String>) {
 
@@ -11,7 +10,7 @@ fun main(args: Array<String>) {
         LOG> p;
         p = p - 1;
         };
-        IF 6 - 2 LESS p {
+        IF 6 - 2 MORE p {
         LOG> 1 + 2 * (2 - 4);
         };
     """.trimIndent()

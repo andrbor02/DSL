@@ -31,6 +31,5 @@ enum class TokenTypesList (val tokenType: TokenType) {
 
     IF(TokenType("IF", "IF")),
     ELSE(TokenType("ELSE", "ELSE")),
-    FOR(TokenType("FOR", "FOR")),
     WHILE(TokenType("WHILE", "WHILE"))
 }
