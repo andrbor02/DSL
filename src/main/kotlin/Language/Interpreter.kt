@@ -4,7 +4,6 @@ import Language.AST.*
 import java.util.*
 
 class Interpreter {
-    //var linkedListStorage = HashMap<String, List<Any>>()
     private val variableStorage = HashMap<String, String>()
 
     fun interpret(node: ExpressionNode): String {
@@ -15,7 +14,8 @@ class Interpreter {
             is NumberNode -> return node.number.value
             is VariableNode -> return variableStorage[node.variable.value] ?: "VARIABLE ERROR"
             is IfNode -> ifHandler(node)
-            //is If While For Linked
+            is WhileNode -> whileHandler(node)
+            //is ForNode -> forHandler(node)
         }
         return "Node error in interpreter"
     }
@@ -34,12 +34,6 @@ class Interpreter {
                 variableStorage.put(varNode.variable.value, result)
                 return result
             }
-
-//            TokenTypesList.GET.tokenType.name,
-//            TokenTypesList.ADD.tokenType.name,
-//            TokenTypesList.REMOVE.tokenType.name -> {
-//
-//            }
 
             TokenTypesList.PLUS.tokenType.name,
             TokenTypesList.MINUS.tokenType.name,
@@ -98,6 +92,42 @@ class Interpreter {
     fun getElseOperations(node: IfNode) {
         for (i in 0 until node.elseOperations.size) {
             interpret(node.elseOperations[i])
+        }
+    }
+
+    fun whileHandler(node: WhileNode) {
+        var leftVal = interpret(node.leftNode).toInt()
+        var rightVal = interpret(node.rightNode).toInt()
+        when (node.operator.type) {
+            TokenTypesList.LESS.tokenType -> {
+                while (leftVal < rightVal) {
+                    for (operation in node.operations) {
+                        interpret(operation)
+                    }
+                    leftVal = interpret(node.leftNode).toInt()
+                    rightVal = interpret(node.rightNode).toInt()
+                }
+            }
+
+            TokenTypesList.MORE.tokenType -> {
+                while (leftVal > rightVal) {
+                    for (operation in node.operations) {
+                        interpret(operation)
+                    }
+                    leftVal = interpret(node.leftNode).toInt()
+                    rightVal = interpret(node.rightNode).toInt()
+                }
+            }
+
+            TokenTypesList.EQUAL.tokenType -> {
+                while (leftVal == rightVal) {
+                    for (operation in node.operations) {
+                        interpret(operation)
+                    }
+                    leftVal = interpret(node.leftNode).toInt()
+                    rightVal = interpret(node.rightNode).toInt()
+                }
+            }
         }
     }
 }

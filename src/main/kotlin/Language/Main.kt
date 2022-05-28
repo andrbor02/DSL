@@ -5,28 +5,13 @@ import Language.AST.UnaryOperationNode
 
 fun main(args: Array<String>) {
 
-//    val code = """
-//        p = 5;
-//        g = 10;
-//        IF;
-//        LOG> p + g * 10 - 7;
-//    """.trimIndent()
-
     val code = """
-        IF 4 < 5 {
-        LOG> 10 - 7 * 7 + 30;
-        }
-        LOG> 5;
+        p = 5;
+        WHILE p MORE 1 {
+        LOG> p;
+        p = p - 1;
+        };
     """.trimIndent()
-
-
-//    IF a < b {
-//      LOG> "IF works properly"
-//    }
-//        LINKEDLIST ADD p;
-//        LINKEDLIST ADD g;
-//        LOG> LINKEDLIST GET 0;
-//        LOG> LINKEDLIST GET 0 % LINKEDLIST GET 1;
 
     val lexer = Lexer(code)
     val list = lexer.lex()

@@ -31,12 +31,8 @@ enum class TokenTypesList (val tokenType: TokenType) {
     DIVIDE(TokenType("DIVIDE", "%")),
     MULTIPLY(TokenType("MULTIPLY", "\\*")),
 
-    IF(TokenType("IF", "^IF")),
-    ELSE(TokenType("ELSE", "^ELSE")),
-    FOR(TokenType("FOR", "^FOR")),
-    WHILE(TokenType("WHILE", "^WHILE"))
-
-//    ADD(TokenType("ADD", "ADD")),
-//    GET(TokenType("GET", "GET")),
-//    REMOVE(TokenType("CONTAINS", "CONTAINS"))
+    IF(TokenType("IF", "IF")),
+    ELSE(TokenType("ELSE", "ELSE")),
+    FOR(TokenType("FOR", "FOR")),
+    WHILE(TokenType("WHILE", "WHILE"))
 }

@@ -1,6 +1,6 @@
 package Language.AST
 
-class StatementsNode: ExpressionNode() {
+class RootNode: ExpressionNode() {
     val codeStrings = ArrayList<ExpressionNode>()
 
     fun addNode(node: ExpressionNode) {

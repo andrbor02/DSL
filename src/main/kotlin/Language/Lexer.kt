@@ -7,6 +7,7 @@ class Lexer(val code: String) {
     var tokenList = mutableListOf<Token>()
 
     fun lex(): List<Token> {
+        println(code)
         while (nextToken()) { }
 
         return tokenList
@@ -22,7 +23,6 @@ class Lexer(val code: String) {
             val tokenType = tokenTypesList[i].tokenType
             val regex = tokenType.regex
             val matcher = Pattern.compile(regex).matcher(code)
-//            println(matcher.group().toString())
             if (matcher.find(position) && matcher.start() == position) {
                 code.substring(position + matcher.group().length)
                 val token = Token(tokenType, matcher.group(), position)
@@ -33,7 +33,7 @@ class Lexer(val code: String) {
                 return true
             }
         }
-        throw Exception("Error on $position character")
+        throw Exception("Error on $position character -> ${tokenList.last()}")
     }
 }
 
